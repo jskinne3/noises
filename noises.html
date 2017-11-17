@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>noises</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+</head>
+<body>
+<h1>noises</h1>
+
+<div id="checkboxes" style="display: flex;">
+  <div class="col" id="col1">
+    <input type="checkbox" value="440.000" /><br />
+    <input type="checkbox" value="391.995" /><br />
+    <input type="checkbox" value="349.228" /><br />
+    <input type="checkbox" value="329.628" /><br />
+    <input type="checkbox" value="293.665" /><br />
+    <input type="checkbox" value="261.626" /><br />
+  </div>
+  <div class="col" id="col2">
+    <input type="checkbox" value="440.000" /><br />
+    <input type="checkbox" value="391.995" /><br />
+    <input type="checkbox" value="349.228" /><br />
+    <input type="checkbox" value="329.628" /><br />
+    <input type="checkbox" value="293.665" /><br />
+    <input type="checkbox" value="261.626" /><br />
+  </div>
+  <div class="col" id="col3">
+    <input type="checkbox" value="440.000" /><br />
+    <input type="checkbox" value="391.995" /><br />
+    <input type="checkbox" value="349.228" /><br />
+    <input type="checkbox" value="329.628" /><br />
+    <input type="checkbox" value="293.665" /><br />
+    <input type="checkbox" value="261.626" /><br />
+  </div>
+</div>
+
+<p id="list"></p>
+<p id="tracker"></p>
+<script>
+  "use strict";
+
+  // prepare audio thing
+  var context = new (window.AudioContext || window.webkitAudioContext)();
+  var oscillator;
+  // count seconds
+  var sec = 0
+  setInterval( function(){
+    sec += 1;
+    // select one column per second
+    var colname = "#col"+sec
+    // highlight the column
+    $( colname ).effect("highlight", {}, 1000);
+    // select all the checkboxes that are checked in the column, and iterate over them
+    $( colname+' input:checked').each(function() {
+      // select the Hz value for each checkbox
+      var note = $(this).attr('value')
+      // create an oscillator to play a sine wave at that Hz frequency
+      oscillator = context.createOscillator();
+      oscillator.type = 'sine';
+      oscillator.frequency.value = note;
+      var now = context.currentTime;
+      oscillator.connect(context.destination);
+      // play the oscillator for a little while, then stop
+      oscillator.start();
+      oscillator.stop(now + 0.7);
+    });
+    // after three seconds, start back over with the first column again
+    if (sec == 3) sec = 0;
+  }, 1000);
+
+</script>
+</body>
+</html>
