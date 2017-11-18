@@ -41,6 +41,13 @@
 <script>
   "use strict";
 
+  var realCoef;
+  var imagCoef;
+  $.getJSON("https://raw.githubusercontent.com/mohayonao/wave-tables/master/Bass.json", function(json) {
+    realCoef = json["real"];
+    imagCoef = json["imag"];
+  });
+  
   // prepare audio thing
   var context = new (window.AudioContext || window.webkitAudioContext)();
   var oscillator;
@@ -58,7 +65,14 @@
       var note = $(this).attr('value')
       // create an oscillator to play a sine wave at that Hz frequency
       oscillator = context.createOscillator();
-      oscillator.type = 'sine';
+      //oscillator.type = 'sine';
+
+      var real = new Float32Array(realCoef);
+      var imag = new Float32Array(imagCoef);
+      var wave = context.createPeriodicWave(real, imag);
+      oscillator = context.createOscillator();
+      oscillator.setPeriodicWave(wave);
+
       oscillator.frequency.value = note;
       var now = context.currentTime;
       oscillator.connect(context.destination);
