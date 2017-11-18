@@ -36,18 +36,34 @@
   </div>
 </div>
 
-<p id="list"></p>
-<p id="tracker"></p>
+<p>
+  <select id="instrument" onchange="changeInstrument(this);">
+    <option></option>
+    <option value="Bass">Bass</option>
+    <option value="Celeste">Celeste</option>
+    <option value="ChorusStrings">ChorusStrings</option>
+    <option value="Ethnic33">Ethnic33</option>
+    <option value="Organ3">Organ3</option>
+    <option value="Piano">Piano</option>
+    <option value="Throaty">Throaty</option>
+    <option value="Wurlitzer">Wurlitzer</option>
+  </select>
+</p>
 <script>
   "use strict";
 
   var realCoef;
   var imagCoef;
-  $.getJSON("https://raw.githubusercontent.com/mohayonao/wave-tables/master/Bass.json", function(json) {
-    realCoef = json["real"];
-    imagCoef = json["imag"];
-  });
+
+  var getInstrument = function (name) {
+      var name = (name === undefined) ? 'Bass' : name;
+      $.getJSON("https://raw.githubusercontent.com/mohayonao/wave-tables/master/"+name+".json", function(json) {
+      realCoef = json["real"];
+      imagCoef = json["imag"];
+    });
+  }
   
+
   // prepare audio thing
   var context = new (window.AudioContext || window.webkitAudioContext)();
   var oscillator;
@@ -83,6 +99,16 @@
     // after three seconds, start back over with the first column again
     if (sec == 3) sec = 0;
   }, 1000);
+
+  // set up the sounds on page load
+  getInstrument();
+
+  // change the sound when user selects from drop-down
+  var changeInstrument = function (arg) {
+    getInstrument(arg.value);
+  }
+
+
 
 </script>
 </body>
